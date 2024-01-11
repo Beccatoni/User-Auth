@@ -16,7 +16,7 @@ const registration = async (req,res) => {
         });
 
         // save user account
-        const user = await  newUser.save();
+        const user = await newUser.save();
         res.status(200).json(
             {message: "User account created  successfully!",
              user: user
@@ -45,7 +45,28 @@ const login = async (req, res) => {
     }
 }
 
+
+// Resetting the password
+const ForgotPassword = async (req, res, next) => {
+    try {
+        const validUser = await UserModel.findOne({ email: req.body.email });
+
+        if (!validUser) return next(errorHandler(401,  "Invalid email!" ));
+        
+        var token = jwt.sign({email:req.body}, process.env.JWT_SECRET_KEY, {expiresIn: 1200});
+
+        var recoveryLink = `http://localhost:3000/reset-password/${token}/${validUser._id}`;
+
+        sendEmail(validUser.email, 'Reset Pasword', recoveryLink);
+
+        res.status(200).json({message:'Password reset link sent to your email!'});
+    } catch (error) {
+        next(errorHandler(500, error.message));
+    }
+}
+
 module.exports = {
     registration,
-    login
+    login,
+    ForgotPassword
 }
