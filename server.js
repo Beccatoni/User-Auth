@@ -10,7 +10,7 @@ const {router} = require('./routes/index');
 dotenv.config();
 
 // Your MongoDB connection string (replace 'your_actual_connection_string' with the actual connection string)
-const mongoURL = process.env.MONGO_URL || 'your_actual_connection_string';
+const mongoURL = process.env.MONGO_URL;
 
 // Connect to MongoDB using .then()
 mongoose.connect(mongoURL)
